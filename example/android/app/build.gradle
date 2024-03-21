@@ -1,3 +1,12 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+
+    id "ly.img.android.sdk"
+    id "com.google.devtools.ksp"
+} 
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -21,12 +30,7 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-apply plugin: 'ly.img.android.sdk'
-
-imglyConfig {
+IMGLY.configure {
     modules {
         include 'ui:text'
         include 'ui:focus'
@@ -42,7 +46,17 @@ imglyConfig {
 }
 
 android {
-    compileSdkVersion 31
+    namespace "ly.img.flutter.imgly_sdk_example"
+    compileSdk 34
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -56,9 +70,10 @@ android {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "ly.img.flutter.imgly_sdk_example"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        resValue 'string', 'vesdk_version', "v$vesdk_version"
     }
 
     buildTypes {
